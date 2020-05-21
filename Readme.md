@@ -24,5 +24,7 @@ The following requirements must be followed to install the application for devel
 Use command
 	```
         python orm\main.py 
+    ```
+    ```
         python mySQL\main.py
     ```

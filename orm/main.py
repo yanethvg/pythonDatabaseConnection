@@ -15,18 +15,7 @@ DATABASE = os.getenv('DB_NAME')
 
 database = peewee.MySQLDatabase(DATABASE, host=HOST, port=3306, user=USER, passwd=PASSWORD)
 
-class User(peewee.Model):
-	username = peewee.CharField(unique=True, max_length=50, index=True)
-	password = peewee.CharField(max_length=50)
-	email = peewee.CharField(max_length=50, null=True)
-	active = peewee.BooleanField(default=True)
-	created_date = peewee.DateTimeField(default=datetime.now)
-
-	class Meta:
-		database = database
-		db_tables = 'users'
-
-if __name__ == '__main__':
+def createdUser():
 	#crea la base de datos con solo ingresar el comando
 	if User.table_exists():
 		User.drop_table()
@@ -56,3 +45,44 @@ if __name__ == '__main__':
 	#retorna un objeto metodo de clase
 	query = User.insert(username='melisa', password='password', email='melisa@gmail.com')
 	query.execute()
+
+def updatedUser():
+	user = User.get( User.id == 1)
+	print(user)
+	#1 actualizar 
+	user.active = False
+	user.save()
+
+	#2 actualizar
+	query = User.update(active=True).where(User.id == 1)
+	query.execute()
+
+def deletedUser():
+	#user = User.get( User.id == 1)
+	#eliminacion por instancia
+	#user.delete_instance()
+
+	query = User.delete().where(User.id == 2)
+	query.execute()
+
+
+class User(peewee.Model):
+	username = peewee.CharField(unique=True, max_length=50, index=True)
+	password = peewee.CharField(max_length=50)
+	email = peewee.CharField(max_length=50, null=True)
+	active = peewee.BooleanField(default=True)
+	created_date = peewee.DateTimeField(default=datetime.now)
+
+	class Meta:
+		database = database
+		db_tables = 'users'
+
+	def __str__(self):
+		return self.username
+
+if __name__ == '__main__':
+	#createdUser()
+	#updatedUser()
+	deletedUser()
+
+
