@@ -1,2 +1,4 @@
 PyMySQL==0.9.3
 python-dotenv
+peewee
+wheel
