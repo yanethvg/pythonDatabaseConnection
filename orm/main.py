@@ -65,6 +65,40 @@ def deletedUser():
 	query = User.delete().where(User.id == 2)
 	query.execute()
 
+def getUser():
+	#obtener un registro
+	#user = User.get(User.id == 1)
+	#print(user)
+	#se puede utilizar el metodo select retorna un objeto iterable
+	#users = User.select().where(User.id > 3) # select * from users;
+	#for user in users: # se veran todos los registros de la tabla
+	#	print(user)
+	#user = User.select().where(User.id == 1).first() # o usar el metodo get()
+	#print(user)
+	# se pueden colocar dentro del select los parametros a traer
+	#user = User.select(User.username, User.password).where(User.id == 1).first() # o usar el metodo get()
+	#print(user.username)
+	#print(user.password)
+	#and o or
+	#user = User.select().where( (User.id == 1) and (User.password == 'password')).first() # o usar el metodo get()
+	#print(user)
+	#user = User.select().where(User.email >> None ).first() # o usar el metodo get()
+	#print(user)
+	#para poner not null
+	#user = User.select().where( ~User.email >> None ).first() # o usar el metodo get()
+	#print(user)
+	users = ['zoila', 'dayana']
+	# select * from users where username in []
+	#users = User.select().where( User.username << users )
+	#for user in users: # se veran todos los registros de la tabla
+	#	print(user)
+
+	#select * from users where user like '%eduardo%' funcion contains
+	#select * from users where user like '%eduardo' funcion startswith
+	#select * from users where user like 'eduardo%' funcion endswith
+	users = User.select().where( User.username.contains('zoila') )
+	for user in users: # se veran todos los registros de la tabla
+		print(user)
 
 class User(peewee.Model):
 	username = peewee.CharField(unique=True, max_length=50, index=True)
@@ -83,6 +117,7 @@ class User(peewee.Model):
 if __name__ == '__main__':
 	#createdUser()
 	#updatedUser()
-	deletedUser()
+	#deletedUser()
+	getUser()
 
 
