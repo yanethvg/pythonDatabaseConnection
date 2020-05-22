@@ -100,6 +100,27 @@ def getUser():
 	for user in users: # se veran todos los registros de la tabla
 		print(user)
 
+def sortUser():
+	#count= User.select().count()
+	#print(count)
+
+	#count= User.select().where(User.id > 2).count()
+	#print(count)
+
+	#Uso de metodo limit los primeros dos registros
+	#users= User.select().where(User.id > 1).limit(2)
+	#for user in users:
+	#	print(user)
+
+	#ordenar con metodos +asc() o -desc()
+	#users= User.select().where(User.id > 1).order_by(User.username.asc())
+	#for user in users:
+	#	print(user)
+
+	last = User.select().order_by(User.id.desc()).limit(1).get()
+	print(last)
+
+	
 class User(peewee.Model):
 	username = peewee.CharField(unique=True, max_length=50, index=True)
 	password = peewee.CharField(max_length=50)
@@ -118,6 +139,7 @@ if __name__ == '__main__':
 	#createdUser()
 	#updatedUser()
 	#deletedUser()
-	getUser()
+	#getUser()
+	sortUser()
 
 
