@@ -120,7 +120,32 @@ def sortUser():
 	last = User.select().order_by(User.id.desc()).limit(1).get()
 	print(last)
 
+def existsUser():
+	try:
+		user = User.get(User.id == 10)
+		print(user)
+	except User.DoesNotExist as error:
+		print("El usuario no existe")
 	
+	user = User.select().where(User.id == 10).first()
+	if user:
+		print("El usuario existe")
+	else:
+		print("El usuario no existe en select")
+
+	count = User.select().where(User.id == 10).count()
+	if count:
+		print("El usuario existe")
+	else:
+		print("El usuario no existe en count")
+
+	#usando un metodo exists
+	flag = User.select().where(User.id == 10).exists()
+	if flag:
+		print("El usuario existe")
+	else:
+		print("El usuario no existe en exists")
+
 class User(peewee.Model):
 	username = peewee.CharField(unique=True, max_length=50, index=True)
 	password = peewee.CharField(max_length=50)
@@ -140,6 +165,7 @@ if __name__ == '__main__':
 	#updatedUser()
 	#deletedUser()
 	#getUser()
-	sortUser()
+	#sortUser()
+	existsUser()
 
 
