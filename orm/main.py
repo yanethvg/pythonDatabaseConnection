@@ -146,6 +146,48 @@ def existsUser():
 	else:
 		print("El usuario no existe en exists")
 
+
+def creationTables():
+	if Store.table_exists():
+		Store.drop_table()
+
+	if User.table_exists():
+		User.drop_table()
+
+	User.create_table()
+	Store.create_table()
+
+def relationOneToOne():
+
+	#creando usuario
+	user = User.create(username='dayana', password='password', email='dayana@gmail.com')
+	#crenado su tienda se puede ocupar user_id = 1
+	store = Store.create(name='tienda dayana', address='sin direccion', user=user)
+
+	tienda_facil = Store.get(Store.user_id == 1)
+	print(tienda_facil)
+	#retorna la relacion con el usuario
+	print(tienda_facil.user.username)
+
+def relationOneToMany():
+	#creando usuario
+	user = User.create(username='zoila', password='password', email='zoila@gmail.com')
+	#crenado su tienda se puede ocupar user_id = 1
+	store1 = Store.create(name='tienda zoila', address='sin direccion', user=user)
+	store2 = Store.create(name='tienda villatoro', address='sin direccion', user=user)
+
+	#viendo la info de la primera tienda
+	user = User.get(User.id == 1)
+	print(user)
+
+	for store in user.stores:
+		print(store)
+
+	store1= Store.get(Store.id == 1)
+	print(store1.user)
+
+
+
 class User(peewee.Model):
 	username = peewee.CharField(unique=True, max_length=50, index=True)
 	password = peewee.CharField(max_length=50)
@@ -155,10 +197,26 @@ class User(peewee.Model):
 
 	class Meta:
 		database = database
-		db_tables = 'users'
+		db_table = 'users'
 
 	def __str__(self):
 		return self.username
+
+class Store(peewee.Model):
+	#user = peewee.ForeignKeyField(User, primary_key=True) #relacion uno a uno
+	user = peewee.ForeignKeyField(User,related_name='stores') #relacion uno a muchos
+	name = peewee.CharField(max_length=50)
+	address = peewee.TextField()
+	active = peewee.BooleanField(default=True)
+	created_date = peewee.DateTimeField(default=datetime.now)
+
+	class Meta:
+		database = database
+		db_table = 'stores'
+
+	def __str__(self):
+		return self.name
+
 
 if __name__ == '__main__':
 	#createdUser()
@@ -166,6 +224,9 @@ if __name__ == '__main__':
 	#deletedUser()
 	#getUser()
 	#sortUser()
-	existsUser()
+	#existsUser()
+	#relationOneToOne()
+	#creationTables()
+	#relationOneToMany()
 
 
