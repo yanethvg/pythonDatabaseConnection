@@ -147,15 +147,19 @@ def existsUser():
 		print("El usuario no existe en exists")
 
 
-def creationTables():
+def creation_tables():
 	if Store.table_exists():
 		Store.drop_table()
 
 	if User.table_exists():
 		User.drop_table()
 
+	if Product.table_exists():
+		Product.drop_table()
+
 	User.create_table()
 	Store.create_table()
+	Product.create_table()
 
 def relationOneToOne():
 
@@ -186,7 +190,36 @@ def relationOneToMany():
 	store1= Store.get(Store.id == 1)
 	print(store1.user)
 
+def insert_users():
+	User.create(username='dayana', password='password', email='dayana@gmail.com')
+	User.create(username='zoila', password='password', email='zoila@gmail.com')
 
+def insert_stores():
+	Store.create(name='tienda zoila', address='sin direccion', user_id=1)
+	Store.create(name='tienda villatoro', address='sin direccion', user_id=2)
+
+def insert_products():
+	Product.create(store_id=1, name='Pan', description='Pan Integral', price=5.5, stock=2)
+	Product.create(store_id=1, name='Leche', description='Baja en grasas', price=15.5, stock=10)
+	Product.create(store_id=1, name='Jamon', description='de pavo', price=30.90, stock=6)
+
+	Product.create(store_id=2, name='Soda', description='Dieta', price=1.20, stock=2)
+	Product.create(store_id=2, name='Fritura', description='Frituras de papa', price=7.90, stock=20)
+	Product.create(store_id=2, name='Salda', description='Chile habanero', price=29.30, stock=4)
+
+def create_schema():
+	creation_tables()
+	insert_users()
+	insert_stores()
+	insert_products()
+
+
+def queryn_1():
+	#problema que de una sola sentencia se hacen varias consultas
+	user = User.get(User.id == 1)
+	for store in user.stores:
+		for product in store.products:
+			print(product)
 
 class User(peewee.Model):
 	username = peewee.CharField(unique=True, max_length=50, index=True)
@@ -217,6 +250,21 @@ class Store(peewee.Model):
 	def __str__(self):
 		return self.name
 
+class Product(peewee.Model):
+	name = peewee.CharField(max_length=100)
+	description= peewee.TextField()
+	store = peewee.ForeignKeyField(Store,related_name='products')
+	price = peewee.DecimalField(max_digits=5, decimal_places=2) #100.00
+	stock = peewee.IntegerField()
+	created_date = peewee.DateTimeField(default=datetime.now)
+
+	class Meta:
+		database = database
+		db_table = 'products'
+
+	def __str__(self):
+		return '{name} - ${price}'.format(name=self.name,price=self.price)
+
 
 if __name__ == '__main__':
 	#createdUser()
@@ -226,7 +274,9 @@ if __name__ == '__main__':
 	#sortUser()
 	#existsUser()
 	#relationOneToOne()
-	#creationTables()
+	#creation_tables()
 	#relationOneToMany()
+	#create_schema()
+	queryn_1()
 
 
