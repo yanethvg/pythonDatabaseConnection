@@ -20,8 +20,24 @@ The following requirements must be followed to install the application for devel
         cp .env.example
     ```
 
+### Uso MongoBD
+    ```
+        show databases;
+    ```
+    ```
+        use minicurso_python
+    ```
+    ```
+        show collections;
+    ```
+    ```
+        db.users.find();
+    ```
+
+
 # Use command
 Use command
+
 	```
         python orm\main.py 
     ```
