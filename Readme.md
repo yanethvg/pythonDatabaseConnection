@@ -23,14 +23,8 @@ The following requirements must be followed to install the application for devel
 ### Uso MongoBD
     ```
         show databases;
-    ```
-    ```
         use minicurso_python
-    ```
-    ```
         show collections;
-    ```
-    ```
         db.users.find();
     ```
 
@@ -40,7 +34,5 @@ Use command
 
 	```
         python orm\main.py 
-    ```
-    ```
         python mySQL\main.py
     ```
