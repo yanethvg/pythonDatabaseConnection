@@ -143,19 +143,19 @@ def creation_tables():
 	database.execute_sql("SET FOREIGN_KEY_CHECKS=0")
 
 	if CategoriesProduct.table_exists():
-		CategoriesProduct.drop_table()
+		CategoriesProduct.drop_table(cascade=True)
 
 	if Category.table_exists():
-		Category.drop_table()
+		Category.drop_table(cascade=True)
 
 	if Product.table_exists():
-		Product.drop_table()
+		Product.drop_table(cascade=True)
 
 	if User.table_exists():
-		User.drop_table()
+		User.drop_table(cascade=True)
 
 	if Store.table_exists():
-		Store.drop_table()
+		Store.drop_table(cascade=True)
 
 	database.execute_sql("SET FOREIGN_KEY_CHECKS=1")
 
@@ -274,7 +274,10 @@ def many_to_many_query():
 	for category in producto.categories:
 		print(category.category.name)
 
+def deleted_recursive():
+	jamon = Product.get(Product.name == 'Jamon')
 
+	jamon.delete_instance(recursive=True)
 
 
 if __name__ == '__main__':
@@ -287,9 +290,10 @@ if __name__ == '__main__':
 	#relationOneToOne()
 	#creation_tables()
 	#relationOneToMany()
-	#create_schema()
+	create_schema()
 	#queryn_1()
 	#joins_schema()
-	many_to_many_query()
+	#many_to_many_query()
+	#deleted_recursive()
 
 
