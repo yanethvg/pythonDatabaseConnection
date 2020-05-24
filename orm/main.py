@@ -221,6 +221,20 @@ def queryn_1():
 		for product in store.products:
 			print(product)
 
+def joins_schema():
+	# on=(Product.store_id = Store.id)
+	query = (
+		Product.select()
+		.join(Store)
+		.join(User)
+		.where(User.id == 1)
+		.order_by(Product.price.desc())
+	)
+
+	for product in query:
+		print("*" * 10)
+		print(product)
+
 class User(peewee.Model):
 	username = peewee.CharField(unique=True, max_length=50, index=True)
 	password = peewee.CharField(max_length=50)
@@ -277,6 +291,7 @@ if __name__ == '__main__':
 	#creation_tables()
 	#relationOneToMany()
 	#create_schema()
-	queryn_1()
+	#queryn_1()
+	joins_schema()
 
 
