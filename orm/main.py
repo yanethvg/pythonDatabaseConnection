@@ -1,19 +1,10 @@
-import os
-from dotenv import load_dotenv
-from pathlib import Path 
+
+from models import (User,Store, Product, Category, CategoriesProduct)
 import peewee
-from datetime import datetime
+from connection import connect_to_db
 
-env_path = Path(__file__).parent.parent.absolute() / '.env'
-load_dotenv(dotenv_path=env_path)
+database = connect_to_db()
 
-HOST= os.getenv('DB_HOST')
-USER = os.getenv('DB_USER')
-PASSWORD = os.getenv('DB_PASSWORD')
-DATABASE = os.getenv('DB_NAME')
-
-
-database = peewee.MySQLDatabase(DATABASE, host=HOST, port=3306, user=USER, passwd=PASSWORD)
 
 def createdUser():
 	#crea la base de datos con solo ingresar el comando
@@ -148,18 +139,31 @@ def existsUser():
 
 
 def creation_tables():
-	if Store.table_exists():
-		Store.drop_table()
 
-	if User.table_exists():
-		User.drop_table()
+	database.execute_sql("SET FOREIGN_KEY_CHECKS=0")
+
+	if CategoriesProduct.table_exists():
+		CategoriesProduct.drop_table()
+
+	if Category.table_exists():
+		Category.drop_table()
 
 	if Product.table_exists():
 		Product.drop_table()
 
+	if User.table_exists():
+		User.drop_table()
+
+	if Store.table_exists():
+		Store.drop_table()
+
+	database.execute_sql("SET FOREIGN_KEY_CHECKS=1")
+
 	User.create_table()
 	Store.create_table()
 	Product.create_table()
+	Category.create_table()
+	CategoriesProduct.create_table()
 
 def relationOneToOne():
 
@@ -207,11 +211,34 @@ def insert_products():
 	Product.create(store_id=2, name='Fritura', description='Frituras de papa', price=7.90, stock=20)
 	Product.create(store_id=2, name='Salda', description='Chile habanero', price=29.30, stock=4)
 
+def insert_categories():
+	Category.create(name='Liquidos', description='Liquidos')
+	Category.create(name='Embutidos', description='embutidos')
+	Category.create(name='Snacks', description='Snacks')
+	Category.create(name='Aderezos', description='Aderezos')
+	Category.create(name='Carnes', description='Carnes')
+
+def insert_categories_products():
+	CategoriesProduct.create(category_id=1,product_id=2)
+	CategoriesProduct.create(category_id=1,product_id=5)
+	CategoriesProduct.create(category_id=1,product_id=4)
+
+	CategoriesProduct.create(category_id=2,product_id=3)
+
+	CategoriesProduct.create(category_id=3,product_id=6)
+
+	CategoriesProduct.create(category_id=4,product_id=4)
+	CategoriesProduct.create(category_id=4,product_id=6)
+
+	CategoriesProduct.create(category_id=5,product_id=3)
+
 def create_schema():
 	creation_tables()
 	insert_users()
 	insert_stores()
 	insert_products()
+	insert_categories()
+	insert_categories_products()
 
 
 def queryn_1():
@@ -235,49 +262,19 @@ def joins_schema():
 		print("*" * 10)
 		print(product)
 
-class User(peewee.Model):
-	username = peewee.CharField(unique=True, max_length=50, index=True)
-	password = peewee.CharField(max_length=50)
-	email = peewee.CharField(max_length=50, null=True)
-	active = peewee.BooleanField(default=True)
-	created_date = peewee.DateTimeField(default=datetime.now)
+def many_to_many_query():
+	categories = Category.select()
+	for category in categories:
+		print(">>"+ str(category))
 
-	class Meta:
-		database = database
-		db_table = 'users'
+		for product in category.products:
+			print(product)
+	
+	producto = Product.get(Product.name == 'Jamon')
+	for category in producto.categories:
+		print(category.category.name)
 
-	def __str__(self):
-		return self.username
 
-class Store(peewee.Model):
-	#user = peewee.ForeignKeyField(User, primary_key=True) #relacion uno a uno
-	user = peewee.ForeignKeyField(User,related_name='stores') #relacion uno a muchos
-	name = peewee.CharField(max_length=50)
-	address = peewee.TextField()
-	active = peewee.BooleanField(default=True)
-	created_date = peewee.DateTimeField(default=datetime.now)
-
-	class Meta:
-		database = database
-		db_table = 'stores'
-
-	def __str__(self):
-		return self.name
-
-class Product(peewee.Model):
-	name = peewee.CharField(max_length=100)
-	description= peewee.TextField()
-	store = peewee.ForeignKeyField(Store,related_name='products')
-	price = peewee.DecimalField(max_digits=5, decimal_places=2) #100.00
-	stock = peewee.IntegerField()
-	created_date = peewee.DateTimeField(default=datetime.now)
-
-	class Meta:
-		database = database
-		db_table = 'products'
-
-	def __str__(self):
-		return '{name} - ${price}'.format(name=self.name,price=self.price)
 
 
 if __name__ == '__main__':
@@ -292,6 +289,7 @@ if __name__ == '__main__':
 	#relationOneToMany()
 	#create_schema()
 	#queryn_1()
-	joins_schema()
+	#joins_schema()
+	many_to_many_query()
 
 
